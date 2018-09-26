@@ -6,49 +6,7 @@
 
 
 import  sys
-class Node(object):
-    def __init__(self, val):
-        self.rc = None
-        self.lc = None
-        self.val = val
-        self.bf = 0
-
-    def insert(self, val):
-        if(self.val):
-            if(val<self.val):
-                if(self.lc is None):
-                    self.lc = Node(val)
-                else:
-                    self.lc.insert(val)
-            elif(val>self.val):
-                if(self.rc is None):
-                    self.rc = Node(val)
-                else:
-                    self.rc.insert(val)
-            else:
-                self.val = val
-
-    def balance(self):
-
-
-    def minValue(self, node):
-        current = node
-        while(current.lc is not None):
-            current = current.lc
-        return current
-
-    def findParent(self, val):
-        parent = None
-        while True:
-            if(self.val is None):
-                return (None, None)
-            if(self.val == val):
-                return (parent, self)
-            if(self.val < val):
-                parent, self = self, self.rc
-            else:
-                parent, self = self, self.lc
-
+"""
     def deleteNode(self, val):
         parent, node = self.findParent(val)
 
@@ -85,11 +43,11 @@ class Node(object):
             del node
         # if node has two children
         else:
-            """
+            
             temp = self.minValue(self.rc)
             self.val = temp.val
             self.rc = self.rc.delete(temp.val)
-            """
+            
             node = parent
             successor = node.rc
             while(successor.lc):
@@ -101,8 +59,118 @@ class Node(object):
                 parent.lc = successor.rc
             else:
                 parent.rc = successor.rc
+"""
+
+class avl(object):
+    def __init__(self, val):
+        self.rc = None
+        self.lc = None
+        self.val = val
+        self.height = -1
+        self.balance = 0
+
+    def insert(self, val):
+        if(self.val):
+            if(val<self.val):
+                if(self.lc is None):
+                    self.lc = avl(val)
+                else:
+                    self.lc.insert(val)
+            elif(val>self.val):
+                if(self.rc is None):
+                    self.rc = avl(val)
+                else:
+                    self.rc.insert(val)
+            else:
+                self.val = val
+
+    def rebalance(self):
+        self.update_heights(recursive=False)
+        self.update_balances(False)
+        while self.balance < -1 or self.balance > 1:
+            if self.balance > 1:
+                if self.node.left.balance < 0:
+                    self.lc.rotate_left()
+                    self.update_heights()
+                    self.update_balances()
+
+            self.rotate_right()
+            self.update_heights()
+            self.update_balances()
+
+            if self.balance < -1:
+                if self.rc.balance > 0:
+                    self.rc.rotate_right() # we're in case III
+                    self.update_heights()
+                    self.update_balances()
+                self.rotate_left()
+                self.update_heights()
+                self.update_balances()
+
+    def update_heights(self, recursive=True):
+
+        if self:
+            if recursive:
+                if self.lc:
+                    self.lc.update_heights()
+                if self.rc:
+                    self.rc.update_heights()
+
+            self.height = 1 + max(self.lc.height, self.rc.height)
+        else:
+            self.height = -1
+
+    def update_balances(self, recursive=True):
+
+        if self:
+            if recursive:
+                if self.lc:
+                    self.lc.update_balances()
+                if self.rc:
+                    self.rc.update_balances()
+
+            self.balance = self.lc.height - self.rc.height
+        else:
+            self.balance = 0
+
+    def rotate_right(self):
+
+        new_root = self.lc
+        new_left_sub = new_root.rc
+        old_root = self
+
+        self = new_root
+        old_root.lc = new_left_sub
+        new_root.rc = old_root
 
 
+    def rotate_left(self):
+
+        new_root = self.rc
+        new_left_sub = new_root.lc
+        old_root = self
+
+        self = new_root
+        old_root.rc = new_left_sub
+        new_root.lc = old_root
+
+    def minValue(self, node):
+        current = node
+        while(current.lc is not None):
+            current = current.lc
+        return current
+
+    def findParent(self, val):
+        parent = None
+        while True:
+            if(self.val is None):
+                return (None, None)
+            if(self.val == val):
+                return (parent, self)
+            if(self.val < val):
+                parent, self = self, self.rc
+            else:
+                parent, self = self, self.lc
 
     def inorder(self):
         if(self.val):
@@ -129,14 +197,13 @@ class Node(object):
         print(self.val)
 
 
-
 a = int(input("enter root"))
-root = Node(a)
+root = avl(a)
 
 
 
 while(1):
-    z = input("Enter your choice\n 1. Insert\n2.smallest element\n 3. Inorder\n 4. Preorder\n 5. Postorder\n 6.Delete\n7. Exit\n")
+    z = input("Enter your choice\n 1. Insert\n2.smallest element\n 3. Inorder\n 4. Preorder\n 5. Postorder\n 6.Delete\n7. Exit\n8.balance factor of a node\n")
     if (z == '1'):
         b = int(input("enter the number of elements to be inserted"))
         while (b > 0):
@@ -168,6 +235,15 @@ while(1):
 
     elif(z=='7'):
         sys.exit()
+    elif(z == '8'):
+        if(root.val):
+            if(root.lc):
+                root.lc.inorder()
+            print(root.val, root.balance)
+            if(root.rc):
+                root.rc.inorder()
+        else:
+            print("Tree is Empty")
 
 
 

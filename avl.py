@@ -66,7 +66,7 @@ class avl(object):
         self.rc = None
         self.lc = None
         self.val = val
-        self.height = -1
+        self.height = 0
         self.balance = 0
 
     def insert(self, val):
@@ -83,13 +83,15 @@ class avl(object):
                     self.rc.insert(val)
             else:
                 self.val = val
+        self.rebalance()
 
     def rebalance(self):
-        self.update_heights(recursive=False)
-        self.update_balances(False)
+        self.update_heights()
+        #self.update_balances()
+        """
         while self.balance < -1 or self.balance > 1:
             if self.balance > 1:
-                if self.node.left.balance < 0:
+                if self.lc.balance < 0:
                     self.lc.rotate_left()
                     self.update_heights()
                     self.update_balances()
@@ -106,32 +108,37 @@ class avl(object):
                 self.rotate_left()
                 self.update_heights()
                 self.update_balances()
+        """
+    def height1(self):
+        if self.val is None:
+            return 0
+        else:
+            return self.height
 
-    def update_heights(self, recursive=True):
-
-        if self:
-            if recursive:
+    def update_heights(self):
+        if self.val:
+            print(self.val)
+            if (self.lc != None or self.rc != None):
                 if self.lc:
                     self.lc.update_heights()
                 if self.rc:
                     self.rc.update_heights()
-
-            self.height = 1 + max(self.lc.height, self.rc.height)
+                self.height = 1 + max(self.lc.getHeight(), self.rc.getHeight())
+            else:
+                self.height = 0
         else:
-            self.height = -1
-
-    def update_balances(self, recursive=True):
-
-        if self:
-            if recursive:
-                if self.lc:
-                    self.lc.update_balances()
-                if self.rc:
-                    self.rc.update_balances()
-
-            self.balance = self.lc.height - self.rc.height
-        else:
-            self.balance = 0
+            self.height = 0
+"""
+    def update_balances(self):
+        if self.val:
+            if self.lc is None and self.rc is None:
+                self.balance = 0
+            elif(self.lc is None):
+                self.balance = -1
+            elif(self.rc is None):
+                self.balance = 1
+            else:
+                self.balance = self.lc.balance - self.rc.balance
 
     def rotate_right(self):
 
@@ -153,7 +160,7 @@ class avl(object):
         self = new_root
         old_root.rc = new_left_sub
         new_root.lc = old_root
-
+"""
     def minValue(self, node):
         current = node
         while(current.lc is not None):
@@ -176,7 +183,7 @@ class avl(object):
         if(self.val):
             if(self.lc):
                 self.lc.inorder()
-            print(self.val)
+            print(self.height)
             if(self.rc):
                 self.rc.inorder()
         else:

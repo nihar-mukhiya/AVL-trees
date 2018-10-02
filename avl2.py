@@ -36,7 +36,7 @@ class avl(object):
         self.update_heights()
         self.update_balances()
         print(self.balance)
-6        if(self.balance < -1 or self.balance > 1):
+        if(self.balance < -1 or self.balance > 1):
             if self.balance > 1:
                 if self.lc.balance < 0:
                     self.lc.rotateLeft()
